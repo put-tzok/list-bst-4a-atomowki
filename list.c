@@ -24,6 +24,8 @@ struct node* list_insert(int value)
     //return NULL;
 }
 
+struct node *it;
+
 struct node* list_search(int value)
 {
     struct node*it = head;
@@ -31,7 +33,7 @@ struct node* list_search(int value)
     {
         it = it->next;
     }
-    return iter;
+    return it;
     //return NULL;
 }
 
@@ -44,11 +46,11 @@ void list_delete(int value)
     else
     {
         struct node *prev = head;
-        iter = head->next;
+        it = head->next;
         while (it != NULL && it->key != value)
         {
             prev = it;
-            iter = it->next;
+            it = it->next;
         }
         if (it != NULL)
         {
@@ -108,18 +110,18 @@ int main()
             clock_t insertion_time = clock();
             for (unsigned int k = 0; k < n; k++)
             {
-                struct node *iter = list_insert(t[k]);
-                assert(iter != NULL);
-                assert(iter->key == t[k]);
+                struct node *it = list_insert(t[k]);
+                assert(it != NULL);
+                assert(it->key == t[k]);
             }
             insertion_time = clock() - insertion_time;
             shuffle(t, n);
             clock_t search_time = clock();
             for (unsigned int k = 0; k < n; k++)
             {
-                struct node *iter = list_search(t[k]);
-                assert(iter != NULL);
-                assert(iter->key == t[k]);
+                struct node *it = list_search(t[k]);
+                assert(it != NULL);
+                assert(it->key == t[k]);
             }
             search_time = clock() - search_time;
             shuffle(t, n);
