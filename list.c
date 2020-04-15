@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-unsigned int ns[] = {500,2500,5000,7500,1000,12500,15000,20000,30000,50000};
+unsigned int ns[] = {500,2500,5000,7500,10000,12500,15000,20000,30000,50000};
 
 struct node
 {
@@ -138,5 +138,7 @@ int main()
                     (double)search_time / CLOCKS_PER_SEC);
         }
     }
+    getchar();
+    getchar();
     return 0;
 }
