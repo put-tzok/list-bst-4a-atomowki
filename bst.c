@@ -7,6 +7,7 @@
 
 unsigned int ns[] = {500,2500,5000,7500,10000,12500,15000,20000,30000,50000};
 
+// each tree node contains an integer key and pointers to left and right children nodes
 struct node
 {
     int key;
@@ -14,6 +15,7 @@ struct node
     struct node *right;
 };
 
+// tree's beginning is called the root
 struct node *root = NULL;
 
 struct node **tree_search(struct node **candidate, int value)
@@ -96,6 +98,14 @@ unsigned int tree_size(struct node *element)
     }
 }
 
+/*
+    * Fill an array with increasing values.
+    *
+    * Parameters:
+    *      int *t:     pointer to the array
+    *      int n:      number of elements in the array
+*/
+
 void fill_increasing(int *t, int n)
 {
     for (int i = 0; i < n; i++)
@@ -103,6 +113,14 @@ void fill_increasing(int *t, int n)
         t[i] = i;
     }
 }
+
+/*
+    * Reorder array elements in a random way.
+    *
+    * Parameters:
+    *      int *t:     pointer to the array
+    *      int n:      number of elements in the array
+*/
 
 void shuffle(int *t, int n)
 {
@@ -115,25 +133,40 @@ void shuffle(int *t, int n)
     }
 }
 
+/*
+    * Check if tree is a valid BST.
+    *
+    * Parameters:
+    *      struct node *element:   pointer to node to be checked
+    *
+    * Returns:
+    *      bool:                   true if subtree rooted in "element" is a BST
+*/
+
 bool is_bst(struct node *element)
 {
+    // empty tree is a valid BST
     if (element == NULL)
     {
         return true;
     }
 
+    // leaf node is valid
     if (element->left == NULL && element->right == NULL)
     {
         return true;
     }
+    // only right subnode? check it recursively
     if (element->left == NULL && element->right != NULL)
     {
         return (element->key < element->right->key) && is_bst(element->right);
     }
+    // only left subnode? check it recursively
     if (element->left != NULL && element->right == NULL)
     {
         return (element->key > element->left->key) && is_bst(element->left);
     }
+    // both subnodes present? check both recursively
     return (element->key > element->left->key)
         && (element->key < element->right->key)
         && is_bst(element->left)
@@ -193,31 +226,33 @@ int main(int argc, char **argv)
         for (unsigned int j = 0; j < sizeof(ns) / sizeof(*ns); j++)
         {
             unsigned int n = ns[j];
+            // crate an array of increasing integers: 0, 1, 2, ...
             int *t = malloc(n * sizeof(*t));
             fill_increasing(t, n);
+            // insert data using one of methods
             clock_t insertion_time = clock();
             insert(t, n);
             insertion_time = clock() - insertion_time;
-            assert(tree_size(root) == n);
-            assert(is_bst(root));
-            shuffle(t, n);
-            clock_t search_time = clock();
+            assert(tree_size(root) == n);     // after all insertions, tree size must be `n`
+            assert(is_bst(root));            // after all insertions, tree must be valid BST
+            shuffle(t, n);                  // reorder array elements before searching
+            clock_t search_time = clock(); // search for every element in the order present in array `t`
             for (unsigned int k = 0; k < n; k++)
             {
                 struct node **pnode = tree_search(&root, t[k]);
                 struct node *iter = *pnode;
-                assert(iter != NULL);
-                assert(iter->key == t[k]);
+                assert(iter != NULL);       // found element cannot be NULL
+                assert(iter->key == t[k]); // found element must contain the expected value
             }
             search_time = clock() - search_time;
-            shuffle(t, n);
+            shuffle(t, n);  // reorder array elements before deletion
             for (unsigned int l = 0, m = n; l < n; l++, m--)
             {
-                assert(tree_size(root) == m);
+                assert(tree_size(root) == m);   // tree size must be equal to the expected value
                 tree_delete(t[l]);
-                assert(is_bst(root));
+                assert(is_bst(root));   // after deletion, tree must still be valid BST
             }
-            assert(tree_size(root) == 0);
+            assert(tree_size(root) == 0);     // after all deletions, tree has size zero
             free(root);
             free(t);
             printf("%d\t%s\t%f\t%f\n",
